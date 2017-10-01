@@ -1,0 +1,39 @@
+sudo: required
+language: bash
+services:
+  - docker
+env:
+  global:
+  - TRAVISCI_SCRIPT_DIR=/tmp/ci_scripts
+  - DOCKER_USERNAME=nolte
+  - secure: "H6bNJr2eiXk/KRuJNHnxFCpqw2TF1j5UYLSDFiFEcgbHW9swhdAVedEyMkdySrb+A2opW5lyrKganp23wNCksms3HjJNcif9UJDnSDwpOtxD/Te955klUT4URsnCpjeLChp4mWoSYxRBqtU9Ey8Dd7iIR0ZpeLroFOUOLBmGfnVvYvl9R2GX5PfWsOGOM9i+wy26Li7hhDs/p9jfF3usppmwuz9XN7jaZh60NL6JgAiTm4m0xh22kNtzdXR/gTPIaVcRBVCccdh2bbAXfGU+L2SRQ57ZNkjEiEQ//YBq7esT1DGM/PD+qg5hmVp8EhyzJ+oJG5lIQFZdfHQpqPiFxg4g7nhnUIjs6ZbJ4xZjdR9wyy60F/u3fiF1J64COCS28gWjmmMQiDbRZ4jsojoLAJgvGTFT9/2ECWhJG/TR064IlP1V6rmQRFHBEk+K824Cob3aOHfD4x0shVdnWz429v8KGZ5vWqkX4EQIL7A63MgniwL5UdV5jPJ2RTMiP9lRI4JkeZyfundF9+/onVFoHjvbOmE/O2SNInqMPctUoLKbIFoyVFy8NAgjkItd9uaLnl2bJVrotz5IcAF7LRT3GBuWVr5NwKKjHdDT/qc3rfE9wK5VOGXaTjD6cUzAZVhEHhYLxEQBzD+vx/vKBWcG/p0TJhB1aBL2ivuYyoZl+uM="
+
+notifications:
+  webhooks: https://keenio-gateway.herokuapp.com/build
+
+before_install:
+  - mkdir -p $TRAVISCI_SCRIPT_DIR
+  - wget https://gist.githubusercontent.com/nolte/33a1a963d8161db0641b59f26d794e01/raw/dockerhub_deploy.sh -O $TRAVISCI_SCRIPT_DIR/dockerhub_deploy.sh
+  - chmod u+x $TRAVISCI_SCRIPT_DIR/*
+
+jobs:
+  include:
+    - stage: build
+      script:
+        - docker build -t nolte/mqtt-dasher -f Dockerfile  .
+    - script:
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        - docker build -t nolte/rpi-mqtt-dasher -f DockerfileRPI  .
+      deploy:
+        # only executed on master branch
+        - provider: script
+          script: $TRAVISCI_SCRIPT_DIR/dockerhub_deploy.sh $DOCKER_USERNAME $DOCKER_PASSWORD nolte/rpi-mqtt-dasher rpi-mqtt-dasher development
+          on:
+            branch: development
+        - provider: script
+          script: $TRAVISCI_SCRIPT_DIR/dockerhub_deploy.sh $DOCKER_USERNAME $DOCKER_PASSWORD nolte/rpi-mqtt-dasher rpi-mqtt-dasher latest
+        - provider: script
+          script: $TRAVISCI_SCRIPT_DIR/dockerhub_deploy.sh $DOCKER_USERNAME $DOCKER_PASSWORD nolte/rpi-mqtt-dasher rpi-mqtt-dasher $TRAVIS_TAG
+          on:
+            tags: true
+            all_branches: false
