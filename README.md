@@ -43,3 +43,15 @@ _note: follow [this setup](https://github.com/hortinstein/node-dash-button#insta
     ```
 
 4. Configured dash events now feed into MQTT
+
+## use as Docker
+
+**build amd64**
+```
+docker build -t mqtt-dasher -f Dockerfile .
+```
+
+**build armhf**
+```
+docker build -t mqtt-dasher -f DockerfileRPI .
+```
