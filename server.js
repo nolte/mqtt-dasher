@@ -83,7 +83,8 @@ async.series([
     },
     function connectToMQTT (next) {
         winston.info('Connecting to MQTT at mqtt://%s', config.mqtt.host);
-        broker = mqtt.connect('mqtt://' + config.mqtt.host);
+	var mqtt_broker_options = config.mqtt;
+        broker = mqtt.connect(mqtt_broker_options);
         broker.on('connect', function () {
             next();
             // @TODO Not call this twice if we get disconnected
@@ -95,6 +96,9 @@ async.series([
 
         Object.keys(config.buttons).forEach(function (macAddress) {
             var topic = config.buttons[macAddress];
+            if (config.mqtt.preface) {
+              topic = config.mqtt.preface + '/' + topic;
+            }
             buttons[macAddress] = DashButton(macAddress);
             buttons[macAddress].on('detected', buttonEvent.bind(null, macAddress, topic));
         });
