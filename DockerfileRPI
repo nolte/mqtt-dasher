@@ -1,6 +1,20 @@
-FROM armhf/node:6.7.0
+FROM resin/rpi-raspbian:jessie
+
+RUN apt-get update && \
+    apt-get -qy install curl unzip \
+                build-essential python \
+                ca-certificates \
+                --no-install-recommends
+
+RUN curl -sSLO \
+    https://nodejs.org/dist/v6.11.3/node-v6.11.3-linux-armv6l.tar.gz && \
+    tar -xf node-*.tar.gz -C /usr/local \
+    --strip-components=1 && \
+    rm node-*.tar.gz
+
 
 RUN apt-get update && apt-get install libpcap-dev libstdc++6 nmap net-tools iputils-ping -y
+RUN apt-get update && apt-get install git -y
 
 WORKDIR /opt/mqtt-dasher
 RUN mkdir bin
