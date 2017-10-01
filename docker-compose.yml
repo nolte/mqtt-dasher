@@ -1,0 +1,9 @@
+version: '2'
+services:
+  mqtt-dasher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+     - ./_config.yml:/opt/mqtt-dasher/_config.yml
+    network_mode: "host"

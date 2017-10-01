@@ -10,3 +10,5 @@ COPY README.md .
 COPY package.json .
 
 RUN npm install
+
+CMD ["/opt/mqtt-dasher/bin/mqtt-dasher"]
