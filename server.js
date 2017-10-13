@@ -95,7 +95,7 @@ async.series([
         winston.info('Listening for %d buttons', Object.keys(config.buttons).length);
 
         Object.keys(config.buttons).forEach(function (macAddress) {
-            var topic = config.buttons[macAddress];
+            var topic = config.buttons[macAddress].name;
             var iface = config.buttons[macAddress].iface;
             if (config.mqtt.preface) {
               topic = config.mqtt.preface + '/' + topic;
