@@ -19,7 +19,7 @@ mqtt:
 buttons:
     44:65:0d:dc:51:50:
         name: nerf_supplies
-        iface: eth0     # optional
+        interface: eth0     # optional
         timeout: 5000   # optional (time in ms)
         protocol: arp   # optional (one of {udp, arp, all})
 
