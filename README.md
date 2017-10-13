@@ -17,7 +17,9 @@ mqtt:
     preface: dash
 
 buttons:
-    44:65:0d:dc:51:50: nerf_supplies
+    44:65:0d:dc:51:50:
+        name: nerf_supplies
+        iface: eth0     # optional
 
 ```
 
