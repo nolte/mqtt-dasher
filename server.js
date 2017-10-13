@@ -96,10 +96,11 @@ async.series([
 
         Object.keys(config.buttons).forEach(function (macAddress) {
             var topic = config.buttons[macAddress];
+            var iface = config.buttons[macAddress].iface;
             if (config.mqtt.preface) {
               topic = config.mqtt.preface + '/' + topic;
             }
-            buttons[macAddress] = DashButton(macAddress);
+            buttons[macAddress] = DashButton(macAddress, iface);
             buttons[macAddress].on('detected', buttonEvent.bind(null, macAddress, topic));
         });
 
