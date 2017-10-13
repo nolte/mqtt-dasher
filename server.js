@@ -95,12 +95,15 @@ async.series([
         winston.info('Listening for %d buttons', Object.keys(config.buttons).length);
 
         Object.keys(config.buttons).forEach(function (macAddress) {
-            var topic = config.buttons[macAddress].name;
-            var iface = config.buttons[macAddress].iface;
+            var button = config.buttons[macAddress];
+            var topic = button.name;
+            var iface = button.iface || null;
+            var timeout = button.timeout || null;
+            var protocol = button.protocol || null;
             if (config.mqtt.preface) {
               topic = config.mqtt.preface + '/' + topic;
             }
-            buttons[macAddress] = DashButton(macAddress, iface);
+            buttons[macAddress] = DashButton(macAddress, iface, timeout, protocol);
             buttons[macAddress].on('detected', buttonEvent.bind(null, macAddress, topic));
         });
 
