@@ -19,10 +19,12 @@ RUN apt-get update && apt-get install git -y
 WORKDIR /opt/mqtt-dasher
 RUN mkdir bin
 COPY ./bin/mqtt-dasher ./bin/mqtt-dasher
+
+COPY package.json .
+RUN npm install
+
 COPY server.js .
 COPY README.md .
-COPY package.json .
 
-RUN npm install
 
 CMD ["/opt/mqtt-dasher/bin/mqtt-dasher"]
